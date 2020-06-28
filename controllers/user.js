@@ -139,11 +139,25 @@ function getImageFile(req, res) {
             res.status(404).send({ message: "No se ha encontrado " + imageFile })
     })
 }
+
+function getKeepers(req, res) {
+    UserModel.find({ role: 'ROLE_ADMIN' }).exec((err, users) => {
+        if (err)
+            res.status(500).send({ message: "Error buscando keepers" })
+        else {
+            if (!users)
+                res.status(404).send({ message: "Keepers no encontrados" })
+            else
+                res.status(200).send({ users })
+        }
+    })
+}
 module.exports = {
     pruebas,
     saveUser,
     updateUser,
     uploadImage,
     getImageFile,
+    getKeepers,
     login
 }

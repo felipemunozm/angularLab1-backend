@@ -13,5 +13,6 @@ router.post('/login', UserController.login)
 router.put('/update-user/:id', md_auth.ensureAuth, UserController.updateUser)
 router.post('/upload-image-user/:id', [md_auth.ensureAuth], UserController.uploadImage)
 router.get('/get-image-file/:imageFile', UserController.getImageFile)
+router.get('/keepers', UserController.getKeepers)
 
 module.exports = router
