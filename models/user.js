@@ -7,6 +7,7 @@ let UserSchema = Schema({
     name: String,
     surname: String,
     password: String,
+    email: String,
     role: String
 })
 
