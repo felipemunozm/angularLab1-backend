@@ -7,7 +7,8 @@ const jwtService = require('../services/jwt')
 
 function pruebas(req, res) {
     res.status(200).send({
-        message: "Probando el controlador de usuarios y la acción pruebas"
+        message: "Probando el controlador de usuarios y la acción pruebas",
+        user: req.user
     })
 }
 
@@ -78,8 +79,28 @@ function login(req, res) {
         }
     })
 }
+
+function updateUser(req, res) {
+    let userId = req.params.id
+    let newUser = req.body
+    let loggedUser = req.user
+    if (userId != loggedUser.sub) {
+        return res.status(401).send({ message: "FORBBIDEN, usuario diferente al del token" })
+    }
+    UserModel.findByIdAndUpdate(userId, newUser, { new: true }, (err, userUpdated) => {
+        if (err) {
+            res.status(500).send({ messsage: "Error al actualizar usuario" })
+        } else {
+            if (!userUpdated)
+                res.status(404).send({ message: "No se ha podido encontrar el usuario" })
+            else
+                res.status(200).send({ user: userUpdated })
+        }
+    })
+}
 module.exports = {
     pruebas,
     saveUser,
+    updateUser,
     login
 }
