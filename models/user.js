@@ -8,7 +8,8 @@ let UserSchema = Schema({
     surname: String,
     password: String,
     email: String,
-    role: String
+    role: String,
+    image: String
 })
 
 module.exports = mongoose.model('User', UserSchema)

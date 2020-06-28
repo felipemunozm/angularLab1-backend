@@ -1,4 +1,6 @@
 'use strict'
+const fs = require('fs')
+const path = require('path')
 const bcrypt = require('bcrypt-nodejs')
 
 const UserModel = require('../models/user')
@@ -98,9 +100,50 @@ function updateUser(req, res) {
         }
     })
 }
+
+function uploadImage(req, res) {
+    let userId = req.params.id
+    let filename = "No Subido..."
+    if (userId != req.user.sub)
+        return res.status(401).send({ message: "FORBBIDEN, no tienes permisos para actualizar este usuario" })
+    if (req.files && Object.keys(req.files).length != 0 && req.files.image) {
+        let image = req.files.image
+        let uploadDir = 'upload/usuarios/'
+        filename = uploadDir + image.name
+        image.mv(filename, (err) => {
+            if (err)
+                return res.status(500).send({ message: "No se han podido subido archivos: " + err })
+            UserModel.findByIdAndUpdate(userId, { image: image.name }, { new: true }, (err, userUpdated) => {
+                if (err) {
+                    res.status(500).send({ messsage: "Error al actualizar usuario" })
+                } else {
+                    if (!userUpdated)
+                        res.status(404).send({ message: "No se ha podido encontrar el usuario" })
+                    else
+                        res.status(200).send({ user: userUpdated })
+                }
+            })
+        })
+    } else {
+        res.status(404).send({ message: "No se han subido archivos" })
+    }
+}
+
+function getImageFile(req, res) {
+    let imageFile = req.params.imageFile
+    let pathFile = './upload/usuarios/' + imageFile
+    fs.exists(pathFile, (exists) => {
+        if (exists)
+            res.sendFile(path.resolve(pathFile))
+        else
+            res.status(404).send({ message: "No se ha encontrado " + imageFile })
+    })
+}
 module.exports = {
     pruebas,
     saveUser,
     updateUser,
+    uploadImage,
+    getImageFile,
     login
 }

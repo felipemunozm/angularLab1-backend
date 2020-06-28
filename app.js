@@ -2,6 +2,7 @@
 
 const express = require('express')
 const bodyParser = require('body-parser')
+const uploadFile = require('express-fileupload')
 
 
 const app = express();
@@ -12,6 +13,7 @@ const userRoutes = require('./routes/user')
 
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
+app.use(uploadFile())
 
 //configurar cabecera y cors
 
